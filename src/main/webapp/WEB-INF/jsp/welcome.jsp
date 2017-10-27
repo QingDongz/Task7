@@ -16,6 +16,12 @@
 <a href="${ctx}/sms/user">短信注册</a><br/>
 <a href="${ctx}/email/user">邮件注册</a><br/>
 <a href="${ctx}/users">展示所有用户</a><br/>
+<a href="${ctx}/user/ali">展示阿里云文件存储文件名</a><br/>
+<a href="${ctx}/user/qiniu">展示七牛云文件存储文件名</a><br/>
+<a href="${ctx}/alitoqiniu">阿里云文件迁移到七牛云</a><br/>
+<a href="${ctx}/qiniutoali">七牛云文件迁移到阿里云</a><br/>
+<a href="${ctx}/qiniufile">删除七牛所有文件</a><br/>
+<a href="${ctx}/alifile">删除阿里所有文件</a><br/>
 <%--<a href="${ctx}/email/user">邮件注册</a><br/>--%>
 </body>
 </html>

@@ -19,15 +19,15 @@ import java.util.List;
 
 public class QiNiuUtil {
 
-    protected static Logger logger = Logger.getLogger(QiNiuUtil.class);
-    private static String ACCESS_KEY;
-    private static String SECRET_KEY;
+    private static Logger logger = Logger.getLogger(QiNiuUtil.class);
+    private static String accessKeyId;
+    private static String accessKeySecret;
     private static String bucketName;
 
 
     public static void upLoad(InputStream inputStream, String fileName) {
-        Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
-        String token = auth.uploadToken(bucketName);
+        Auth auth = Auth.create(accessKeyId, accessKeySecret);
+        String token = auth.uploadToken(bucketName,fileName);
         boolean isException = false;
         Zone z = Zone.autoZone();
         Configuration c = new Configuration(z);
@@ -59,16 +59,16 @@ public class QiNiuUtil {
             System.out.println(finalUrl);
             return new URL(finalUrl).openStream();
         } catch (MalformedURLException urle) {
-            logger.error("QiNiuYun throw a MalformedURLException");
+            logger.error("QiNiuYun downLoad throw a MalformedURLException");
         } catch (IOException IOe) {
-            logger.error("QiNiuYun throw a IOException");
+            logger.error("QiNiuYun downLoad throw a IOException");
         }
         return null;
     }
 
     public static List<String> getAllFileName() {
         List<String> keys = new ArrayList<>();
-        Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
+        Auth auth = Auth.create(accessKeyId, accessKeySecret);
         Configuration cfg = new Configuration(Zone.zone0());
         BucketManager bucketManager = new BucketManager(auth, cfg);
         //文件名前缀
@@ -95,26 +95,47 @@ public class QiNiuUtil {
         return keys;
     }
 
-
-    public void setAccessKey(String accessKey) {
-        ACCESS_KEY = accessKey;
+    public static void deleteFile(String fileName) {
+        Configuration cfg = new Configuration(Zone.zone0());
+        Auth auth = Auth.create(accessKeyId, accessKeySecret);
+        BucketManager bucketManager = new BucketManager(auth, cfg);
+        try {
+            bucketManager.delete(bucketName, fileName);
+        } catch (QiniuException ex) {
+            //如果遇到异常，说明删除失败
+            logger.error("deleteFile throw a QiniuException,code is " + ex.error() + ",reason is " + ex.response.toString());
+        }
     }
 
-    public void setSecretKey(String secretKey) {
-        SECRET_KEY = secretKey;
+    public static void deleteAllFile() {
+        List<String> keys = QiNiuUtil.getAllFileName();
+        for (String key : keys) {
+            deleteFile(key);
+        }
     }
 
-    public void setBucketName(String bucketName) {
-        QiNiuUtil.bucketName = bucketName;
-    }
-
-    public static String getFileUrl(String fileName) {
+    public static String getThumbFileUrl(String fileName) {
         String encodedFileName = null;
         try {
             encodedFileName = URLEncoder.encode(fileName, "utf-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return String.format("%s/%s", "http://img.summerwaves.cn", encodedFileName);
+        return String.format("%s/%s", "http://img.summerwaves.cn", encodedFileName+"!thumb");
     }
+
+
+    public void setAccessKeyId(String accessKeyId) {
+        QiNiuUtil.accessKeyId = accessKeyId;
+    }
+
+    public void setAccessKeySecret(String accessKeySecret) {
+        QiNiuUtil.accessKeySecret = accessKeySecret;
+    }
+
+    public void setBucketName(String bucketName) {
+        QiNiuUtil.bucketName = bucketName;
+    }
+
+
 }

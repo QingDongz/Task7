@@ -4,13 +4,15 @@ import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.model.*;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.support.MethodReplacer;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ALiYunUtil{
+public class ALiYunUtil {
     protected static Logger log = Logger.getLogger(ALiYunUtil.class);
     private static String accessKeyId;
     private static String accessKeySecret;
@@ -66,11 +68,38 @@ public class ALiYunUtil{
             ossClient.shutdown();
             return keys;
         }catch (OSSException oe) {
-            log.error("Caught an OSSException," + "the error code is " + oe.getErrorCode() + "," + "reason is " + oe.getMessage());
+            log.error(" Caught an getAllFileName OSSException," + "the error code is " + oe.getErrorCode() + "," + "reason is " + oe.getMessage());
         }
         return null;
     }
 
+    public static String getThumbFileUrl(String fileName) {
+        String encodedFileName = null;
+        try {
+            encodedFileName = URLEncoder.encode(fileName, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return String.format("%s/%s", "http://img2.summerwaves.cn", encodedFileName+"!thumb");
+    }
+
+    public static void deleteFile(String fileName) {
+        try {
+            String endpoint = "oss-cn-shenzhen.aliyuncs.com";
+            OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
+            ossClient.deleteObject(bucketName, fileName);
+            ossClient.shutdown();
+        }catch (OSSException oe) {
+            log.error("Caught an deleteFile OSSException," + "the error code is " + oe.getErrorCode() + "," + "reason is " + oe.getMessage());
+        }
+    }
+
+    public static void deleteAllFile() {
+        List<String> keys = ALiYunUtil.getAllFileName();
+        for (String key : keys) {
+            deleteFile(key);
+        }
+    }
 
 
     public void setAccessKeyId(String accessKeyId) {
@@ -85,14 +114,6 @@ public class ALiYunUtil{
         ALiYunUtil.bucketName = bucketName;
     }
 
-    public static String getFileUrl(String fileName) {
-        String encodedFileName = null;
-        try {
-            encodedFileName = URLEncoder.encode(fileName, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return String.format("%s/%s", "http://img2.summerwaves.cn", encodedFileName);
-    }
+
 
 }

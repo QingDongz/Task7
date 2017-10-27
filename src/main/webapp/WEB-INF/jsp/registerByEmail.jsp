@@ -33,7 +33,7 @@
     <script src="${ctx}/static/jquery-3.2.1.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btn").click(function () {
+            $("#btn").click(function lick(o) {
                 var obj = {};
                 obj['email'] = $("#email").val();
                 $.ajax({
@@ -45,6 +45,17 @@
                     success:function(result){
                         alert("验证码发送成功!");
                         $("#code").val(result);
+                        var count = 60;
+                        var countdown = setInterval(CountDown, 1000);
+                        function CountDown() {
+                            $("#btn").attr("disabled", true);
+                            $("#btn").val("在" + count + "秒后可以重新发送");
+                            if (count === 0) {
+                                $("#btn").val("重新发送验证码").removeAttr("disabled");
+                                clearInterval(countdown);
+                            }
+                            count--;
+                        }
                     }
                 });
             });

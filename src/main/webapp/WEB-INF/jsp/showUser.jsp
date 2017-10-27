@@ -16,7 +16,7 @@
     <table border="1">
         <tr>
             <td>头像</td>
-            <td><img src=""></td>
+            <td><img src="${user.avatar}"></td>
         </tr>
         <tr>
             <td>用户名</td>

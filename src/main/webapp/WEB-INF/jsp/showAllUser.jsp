@@ -15,19 +15,16 @@
 <body>
 <table border="1">
     <tr>
-        <td>头像</td>
         <td>用户名</td>
         <td>编辑用户</td>
     </tr>
     <c:forEach var="user" items="${users}">
         <tr class="users" id="${user.id}">
-            <td>${user.avatar}</td>
             <td>${user.username}</td>
             <td>
                 <form action="${ctx}/user/${user.id}" method="get">
                     <input type="submit" value="编辑">
                 </form>
-                <button id="btn2">删除</button>
             </td>
         </tr>
     </c:forEach>

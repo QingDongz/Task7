@@ -2,15 +2,13 @@ package cn.summerwaves.controller;
 
 import cn.summerwaves.model.User;
 import cn.summerwaves.service.IUserService;
-import cn.summerwaves.util.EmailUtil;
-import cn.summerwaves.util.QiNiuUtil;
-import cn.summerwaves.util.SMSUtil;
+import cn.summerwaves.util.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +28,53 @@ public class UserController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String toLogin() {
         return "login";
+    }
+
+    //获取阿里云存储全部文件页面
+    @RequestMapping(value = "/user/ali",method = RequestMethod.GET)
+    public String showALiAllFile(ModelMap modelMap) {
+        List<String> aLiAllFile = ALiYunUtil.getAllFileName();
+        modelMap.addAttribute("aLiAllFile", aLiAllFile);
+        return "aLi";
+    }
+
+    //获取七牛云存储全部文件页面
+    @RequestMapping(value = "/user/qiniu", method = RequestMethod.GET)
+    public String showQiNiuAllFile(ModelMap modelMap) {
+        List<String> qiNiuAllFile = QiNiuUtil.getAllFileName();
+        modelMap.addAttribute("qiNiuAllFile", qiNiuAllFile);
+        return "qiNiu";
+    }
+
+    //删除阿里云存储所有文件
+    @RequestMapping(value = "/alifile",method = RequestMethod.GET)
+    public String deleteALiAllFile(ModelMap modelMap) {
+        ALiYunUtil.deleteAllFile();
+        return "deleteAliAllFile";
+    }
+
+    //删除七牛云存储所有文件
+    @RequestMapping(value = "/qiniufile",method = RequestMethod.GET)
+    public String deleteQiNiuAllFile(ModelMap modelMap) {
+        QiNiuUtil.deleteAllFile();
+        return "deleteQiNiuAllFile";
+    }
+
+    //阿里云存储文件全部迁移到七牛云存储
+    @RequestMapping(value = "/alitoqiniu", method = RequestMethod.GET)
+    public String aLiToQiNiu(ModelMap modelMap) {
+
+        DataMigrationUtil.AliToQiNiu();
+        modelMap.addAttribute("dataMigration", "数据已从阿里云迁移到七牛云！");
+        return "dataMigration";
+    }
+
+    //骑牛云存储文件全部迁移到阿里云存储
+    @RequestMapping(value = "/qiniutoali", method = RequestMethod.GET)
+    public String QiNiuToALi(ModelMap modelMap) {
+        DataMigrationUtil.QiNiuToALi();
+        modelMap.addAttribute("dataMigration", "数据已从七牛云迁移到阿里云！");
+        return "dataMigration";
     }
 
     //获取主页
@@ -95,8 +140,8 @@ public class UserController {
             String type = file.getOriginalFilename().substring(file.getOriginalFilename().indexOf("."));
             String username = user.getUsername();
             InputStream inputStream = file.getInputStream();
-            QiNiuUtil.upLoad(inputStream, username + type);
-            user.setAvatar(QiNiuUtil.getFileUrl(username + type));
+            StorageUtil.upLoad(inputStream, username + type);
+            user.setAvatar(StorageUtil.getFileUrl(username + type));
         }
         if (Objects.equals(user.getTel(), "")) {
             user.setTel(null);
