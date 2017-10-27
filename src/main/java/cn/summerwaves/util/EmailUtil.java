@@ -14,11 +14,6 @@ import java.util.regex.Pattern;
 public class EmailUtil {
     private static Logger log = Logger.getLogger(EmailUtil.class);
     private static String appId;
-
-    public static String getAppId() {
-        return appId;
-    }
-
     private static String appKey;
 
     //账户信息配置

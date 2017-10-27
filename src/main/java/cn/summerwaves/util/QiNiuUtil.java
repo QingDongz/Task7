@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QiNiuUtil {
-
     private static Logger logger = Logger.getLogger(QiNiuUtil.class);
     private static String accessKeyId;
     private static String accessKeySecret;
