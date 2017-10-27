@@ -37,7 +37,7 @@ public class StorageUtil {
 
     public static List<String> getAllFileName() {
         switch (storageName) {
-            case "Ali":
+            case "ALi":
                 return ALiYunUtil.getAllFileName();
             case "QiNiu":
                 return QiNiuUtil.getAllFileName();
@@ -49,7 +49,7 @@ public class StorageUtil {
 
     public static String getFileUrl(String fileName) {
         switch (storageName) {
-            case "Ali":
+            case "ALi":
                 return ALiYunUtil.getThumbFileUrl(fileName);
             case "QiNiu":
                 return QiNiuUtil.getThumbFileUrl(fileName);
